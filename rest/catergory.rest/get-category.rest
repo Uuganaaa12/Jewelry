@@ -1,0 +1,18 @@
+### Variables
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ4MDEyOSwiZXhwIjoxNzY2NTY2NTI5fQ.6fwonx_JZC_DErZoWfpZ4-FICyH63gMf5c3FWIGnfq8
+@categoryId = 694a5bb9eb4c78674c0cc98d
+
+### 7. Get All Categories
+GET {{baseUrl}}/categories
+
+### 8. Get All Categories (with Auth)
+GET {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+
+### 9. Get Single Category by ID
+GET {{baseUrl}}/categories/{{categoryId}}
+
+### 10. Get Single Category (with Auth)
+GET {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}

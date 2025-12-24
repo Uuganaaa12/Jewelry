@@ -1,0 +1,33 @@
+### Variables
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ4MDEyOSwiZXhwIjoxNzY2NTY2NTI5fQ.6fwonx_JZC_DErZoWfpZ4-FICyH63gMf5c3FWIGnfq8
+@categoryId = 694a41e61005cbae281f1f8a
+
+
+### 11. Update Category - Change Name
+PUT {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Fine Jewelry",
+  "description": "Premium jewelry collection"
+}
+
+### 12. Update Category - Change Description Only
+PUT {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "Luxury jewelry items for special occasions"
+}
+
+### 13. Update Sub-Category - Change Parent
+PUT {{baseUrl}}/categories/sub-category-id-here
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "parent": "new-parent-id-here"
+}

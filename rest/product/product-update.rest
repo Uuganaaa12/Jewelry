@@ -1,0 +1,9 @@
+PUT http://localhost:5001/api/products/694a49797fe71474fe4522e5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ3NTg5NCwiZXhwIjoxNzY2NTYyMjk0fQ.wOZ7jkhE1BQmOps8by2HEucMJHzBv8Lc06tmdjowcH0
+Content-Type: application/json
+
+{
+  "name": "Ring",
+  "description": "Beautiful gold ring",
+  "price": 130
+}

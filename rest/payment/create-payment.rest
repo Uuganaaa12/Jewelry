@@ -1,0 +1,11 @@
+POST http://localhost:5001/api/payments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUyNjYzLCJleHAiOjE3NjY2MzkwNjN9.l8ggqMJBzwVuAwnUa46p2soZUCK9Kf4uwfwZjDKRGfg
+Content-Type: application/json
+
+{
+  "order": "ORDER_ID",
+  "amount": 20000,
+  "method": "card",
+  "status": "success",
+  "transactionId": "TXN123456"
+}

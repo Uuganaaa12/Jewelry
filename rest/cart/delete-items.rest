@@ -1,0 +1,2 @@
+DELETE http://localhost:5001/api/cart
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUyMjUyLCJleHAiOjE3NjY2Mzg2NTJ9.I5ozEkXx7kef5cPIPt5uD7s5eHkKBvVPB38luTqmhzk

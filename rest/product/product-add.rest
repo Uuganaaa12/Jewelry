@@ -1,0 +1,64 @@
+### Variables
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUxMjU5LCJleHAiOjE3NjY2Mzc2NTl9.8Jrx9jGMtnEC_YKmlHEWE2duvN3YNBkDFsXnEDwrNAM
+@categoryId = 694a6ce19b3d06ccaf0a4af5
+
+### 1. Create Product - JSON Format (with image URLs)
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Tiffany Knot",
+  "description": "Pendant in Yellow Gold with Diamonds",
+  "price": 5800,
+  "stock": 5,
+  "category": "{{categoryId}}",
+  "tags": ["luxury", "pendant", "gold"],
+  "images": ["https://res.cloudinary.com/dvnbdfajd/image/upload/v1766480929/68887216_PDT_SIO2X1_o64byo.webp"]
+}
+
+
+
+### 3. Create Product - Another Example
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Diamond Ring",
+  "description": "18K White Gold Diamond Engagement Ring",
+  "price": 12500,
+  "stock": 3,
+  "category": "{{categoryId}}",
+  "tags": ["engagement", "diamond", "luxury"],
+  "images": [
+    "https://example.com/ring1.jpg",
+    "https://example.com/ring2.jpg"
+  ]
+}
+
+### 4. Get All Products
+GET {{baseUrl}}/products
+Authorization: Bearer {{token}}
+
+### 5. Get Single Product (replace with actual ID)
+GET {{baseUrl}}/products/694a5bb9eb4c78674c0cc98d
+Authorization: Bearer {{token}}
+
+### 6. Update Product
+PUT {{baseUrl}}/products/694a5bb9eb4c78674c0cc98d
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Tiffany Knot Updated",
+  "price": 6200,
+  "stock": 3
+}
+
+### 7. Delete Product
+DELETE {{baseUrl}}/products/694a5bb9eb4c78674c0cc98d
+Authorization: Bearer {{token}}
+
+###

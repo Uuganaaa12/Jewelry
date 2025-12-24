@@ -1,0 +1,71 @@
+### Variables
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ4NTE5NiwiZXhwIjoxNzY2NTcxNTk2fQ.SLaXUDLh4rwUK7nyJ1YQMAqZrt9EWF8c9YLx3uFVwYg
+@categoryId = 694a5bb9eb4c78674c0cc98d
+
+
+### 1. Create Root Category - Jewelry
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "test cat",
+  "description": "All jewelry items"
+}
+
+### 2. Create Sub-Category - Rings
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Rings",
+  "description": "Various types of rings",
+  "parent": "{{categoryId}}"
+}
+
+### 3. Create Sub-Category - Necklaces
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Necklaces",
+  "description": "Beautiful necklaces for all occasions",
+  "parent": "{{categoryId}}"
+}
+
+### 4. Create Sub-Category - Earrings
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Earrings",
+  "description": "Elegant earrings collection",
+  "parent": "{{categoryId}}"
+}
+
+### 5. Create Sub-Category - Bracelets
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Bracelets",
+  "description": "Stylish bracelets",
+  "parent": "{{categoryId}}"
+}
+
+### 6. Create Another Root Category - Accessories
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Accessories",
+  "description": "Fashion accessories"
+}
+
+

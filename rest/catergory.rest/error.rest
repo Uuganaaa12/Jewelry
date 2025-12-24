@@ -1,0 +1,36 @@
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ4MDEyOSwiZXhwIjoxNzY2NTY2NTI5fQ.6fwonx_JZC_DErZoWfpZ4-FICyH63gMf5c3FWIGnfq8
+@categoryId = 694a41e61005cbae281f1f8a
+### 16. Create Category - Missing Required Field
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "description": "This should fail - no name"
+}
+
+### 17. Create Category - Duplicate Name (should fail)
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Jewelry",
+  "description": "Duplicate name test"
+}
+
+### 18. Get Category - Invalid ID
+GET {{baseUrl}}/categories/invalid-id-format
+
+### 19. Update Category - Without Auth (should fail)
+PUT {{baseUrl}}/categories/{{categoryId}}
+Content-Type: application/json
+
+{
+  "name": "Should Fail"
+}
+
+### 20. Delete Category - Without Auth (should fail)
+DELETE {{baseUrl}}/categories/{{categoryId}}
+

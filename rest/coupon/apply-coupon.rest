@@ -1,0 +1,7 @@
+POST http://localhost:5001/api/coupons/apply
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUyNjYzLCJleHAiOjE3NjY2MzkwNjN9.l8ggqMJBzwVuAwnUa46p2soZUCK9Kf4uwfwZjDKRGfg
+Content-Type: application/json
+
+{
+  "code": "NEWYEAR2025"
+}

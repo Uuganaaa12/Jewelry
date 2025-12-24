@@ -1,0 +1,2 @@
+DELETE {{BASE_URL}}/users/me/wishlist/PRODUCT_ID
+Authorization: Bearer {{TOKEN}}

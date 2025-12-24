@@ -1,0 +1,15 @@
+POST http://localhost:5001/api/orders
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUxMzUxLCJleHAiOjE3NjY2Mzc3NTF9.LU2IfXAzB6R2hcNyqK3jYXu0cGiE5RndlJQFN7BYw_s
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product": "694a49797fe71474fe4522e5",
+      "quantity": 2,
+      "price": 10000
+    }
+  ],
+  "totalAmount": 20000,
+  "paymentMethod": "card"
+}

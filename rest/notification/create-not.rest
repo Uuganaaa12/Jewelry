@@ -1,0 +1,7 @@
+POST {{BASE_URL}}/notifications/test
+Authorization: Bearer {{ADMIN_TOKEN}}
+Content-Type: application/json
+
+{
+  "message": "Order амжилттай!"
+}

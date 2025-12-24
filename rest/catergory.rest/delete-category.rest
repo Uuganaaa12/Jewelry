@@ -1,0 +1,14 @@
+
+@baseUrl = http://localhost:5001/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjQ4MDEyOSwiZXhwIjoxNzY2NTY2NTI5fQ.6fwonx_JZC_DErZoWfpZ4-FICyH63gMf5c3FWIGnfq8
+@categoryId = 694a41e61005cbae281f1f8a
+
+
+### 14. Delete Category
+DELETE {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+
+### 15. Delete Sub-Category
+DELETE {{baseUrl}}/categories/sub-category-id-here
+Authorization: Bearer {{token}}
+
