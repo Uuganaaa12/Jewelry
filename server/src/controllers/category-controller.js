@@ -1,17 +1,49 @@
 import cloudinary from '../config/cloudinary.js';
 import Category from '../models/Category.js';
 
+const parseOptionTemplates = input => {
+  if (!input) return [];
+  const normalise = raw => {
+    if (!raw?.key) return null;
+    return {
+      key: String(raw.key).trim(),
+      label: raw.label || '',
+      type: raw.type || 'choice',
+      values: Array.isArray(raw.values) ? raw.values.filter(Boolean) : [],
+      required: Boolean(raw.required),
+    };
+  };
+
+  if (typeof input === 'string') {
+    try {
+      const parsed = JSON.parse(input);
+      if (Array.isArray(parsed)) return parsed.map(normalise).filter(Boolean);
+    } catch (error) {
+      // ignore invalid JSON and fall through
+    }
+    return [];
+  }
+
+  if (Array.isArray(input)) {
+    return input.map(normalise).filter(Boolean);
+  }
+
+  return [];
+};
+
+const buildCategoryPayload = body => ({
+  name: body.name,
+  description: body.description,
+  parent: body.parent || null,
+  images: body.images || [],
+  optionTemplates: parseOptionTemplates(body.optionTemplates),
+});
+
 // Create category with JSON (image URLs)
 export const createCategory = async (req, res) => {
   try {
-    const { name, description, parent, images } = req.body;
-
-    const category = await Category.create({
-      name,
-      description,
-      parent: parent || null,
-      images: images || [],
-    });
+    const payload = buildCategoryPayload(req.body);
+    const category = await Category.create(payload);
 
     res.status(201).json(category);
   } catch (err) {
@@ -23,7 +55,7 @@ export const createCategory = async (req, res) => {
 // Create category with file upload
 export const createCategoryWithUpload = async (req, res) => {
   try {
-    const { name, description, parent } = req.body;
+    const { name, description, parent, optionTemplates } = req.body;
     let images = [];
 
     if (req.files && req.files.length > 0) {
@@ -55,6 +87,7 @@ export const createCategoryWithUpload = async (req, res) => {
       description,
       parent: parent || null,
       images,
+      optionTemplates: parseOptionTemplates(optionTemplates),
     });
 
     res.status(201).json(category);
@@ -94,7 +127,8 @@ export const getCategory = async (req, res) => {
 // Update category
 export const updateCategory = async (req, res) => {
   try {
-    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+    const payload = buildCategoryPayload(req.body);
+    const category = await Category.findByIdAndUpdate(req.params.id, payload, {
       new: true,
       runValidators: true,
     }).populate('parent', 'name');

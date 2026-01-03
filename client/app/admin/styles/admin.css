@@ -1,0 +1,64 @@
+:root {
+  --admin-cream: #ffffff;
+  --admin-ink: #0d0d0d;
+  --admin-sage: #4d5544;
+  --admin-sage-soft: rgba(77, 85, 68, 0.12);
+  --admin-ink-soft: rgba(13, 13, 13, 0.08);
+}
+
+.admin-shell {
+  background-color: var(--admin-cream);
+  color: var(--admin-ink);
+}
+
+.admin-surface {
+  background-color: var(--admin-cream);
+  border: 1px solid var(--admin-ink);
+}
+
+.admin-panel {
+  background-color: var(--admin-sage-soft);
+  border: 1px solid var(--admin-ink);
+}
+
+.admin-cta {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.8rem;
+}
+
+.admin-placeholder {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    120deg,
+    rgba(77, 85, 68, 0.18),
+    rgba(77, 85, 68, 0.08) 45%,
+    rgba(77, 85, 68, 0.18)
+  );
+}
+
+.admin-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.32) 45%,
+    transparent
+  );
+  animation: admin-sheen 2.6s ease-in-out infinite;
+}
+
+@keyframes admin-sheen {
+  0% {
+    transform: translateX(-65%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(65%);
+  }
+}

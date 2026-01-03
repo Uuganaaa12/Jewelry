@@ -1,5 +1,5 @@
 POST http://localhost:5001/api/orders
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUxMzUxLCJleHAiOjE3NjY2Mzc3NTF9.LU2IfXAzB6R2hcNyqK3jYXu0cGiE5RndlJQFN7BYw_s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjgxOTM1NiwiZXhwIjoxNzY2OTA1NzU2fQ.tzUvPgalyHc0Tc7GUFr-0anKqel6mlHORhEi-UtIIx8
 Content-Type: application/json
 
 {
@@ -10,6 +10,8 @@ Content-Type: application/json
       "price": 10000
     }
   ],
+    "phone": "99119191",
+      "address": "UB bZD",
   "totalAmount": 20000,
   "paymentMethod": "card"
 }

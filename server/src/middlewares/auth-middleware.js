@@ -11,7 +11,6 @@ const verifyToken = req => {
 export const userAuth = (req, res, next) => {
   try {
     req.user = verifyToken(req);
-    console.log('res user:', req.user);
     next();
   } catch {
     res.status(401).json({ message: 'Authentication required' });

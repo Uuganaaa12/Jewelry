@@ -1,6 +1,6 @@
 ### Variables
 @baseUrl = http://localhost:5001/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0ZGI0ZGRlYTIzMjA2N2RjMTk2NiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY2NTUxMjU5LCJleHAiOjE3NjY2Mzc2NTl9.8Jrx9jGMtnEC_YKmlHEWE2duvN3YNBkDFsXnEDwrNAM
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NGE0MWU2MTAwNWNiYWUyODFmMWY4YSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NjgxMjg4MiwiZXhwIjoxNzY2ODk5MjgyfQ.lnRDPrYWf--89r2Bsplinx9sCFlTLMRPPE3QM_Rvzps
 @categoryId = 694a6ce19b3d06ccaf0a4af5
 
 ### 1. Create Product - JSON Format (with image URLs)

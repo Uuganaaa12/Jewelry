@@ -13,8 +13,12 @@ const orderSchema = new mongoose.Schema(
         name: String,
         price: Number,
         quantity: Number,
+        size: String,
       },
     ],
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
+
     totalAmount: { type: Number, required: true },
     status: {
       type: String,

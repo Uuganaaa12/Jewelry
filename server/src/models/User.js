@@ -34,6 +34,8 @@ const userSchema = new mongoose.Schema(
       language: { type: String, default: 'mn' },
       newsletter: { type: Boolean, default: true },
     },
+    resetToken: { type: String },
+    resetTokenExpires: { type: Date },
   },
   { timestamps: true }
 );
