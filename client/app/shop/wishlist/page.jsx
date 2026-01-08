@@ -77,17 +77,22 @@ export default function ShopWishlistPage() {
   const handleMoveToCart = async (productId, sizeOptions = []) => {
     try {
       setMutating(productId);
+      setError(null);
+
       await addCartItem({
         productId,
         quantity: 1,
         size: sizeOptions[0] || null,
       });
+
       const data = await removeWishlistItem(productId);
       setItems(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message || 'Failed to move item to cart.');
-    } finally {
-      setMutating('');
+      setError(err.message);
+      const duration = err.duration || 3000;
+      setTimeout(() => {
+        setError(null);
+      }, duration);
     }
   };
 
@@ -139,7 +144,7 @@ export default function ShopWishlistPage() {
           <div className='border border-[#0d0d0d] bg-[#4d5544]/10 px-6 py-10 text-center text-[11px] uppercase tracking-[0.22em] text-[#4d5544]'>
             Wishlist is empty.{' '}
             <Link href='/shop/products' className='underline'>
-              Browse products
+              Бүтээгдэхүүн үзэх
             </Link>
           </div>
         ) : (

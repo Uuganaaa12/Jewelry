@@ -11,6 +11,14 @@ const resolveToken = () => {
   return token && token.length > 0 ? token : null;
 };
 
+export class ApiError extends Error {
+  constructor(message, duration = 3000) {
+    super(message);
+    this.name = 'ApiError';
+    this.duration = duration;
+  }
+}
+
 const buildAuthHeaders = token => ({
   Authorization: `Bearer ${token}`,
   'Content-Type': 'application/json',
@@ -19,7 +27,8 @@ const buildAuthHeaders = token => ({
 async function authorizedFetch(endpoint, { method = 'GET', body } = {}) {
   const token = resolveToken();
   if (!token) {
-    throw new Error('Authentication required.');
+    // throw new Error('Authentication required.');
+    return <div>Та эхлээд нэвтэрнэ үү.</div>;
   }
 
   const headers = buildAuthHeaders(token);
@@ -50,7 +59,15 @@ export async function fetchCart() {
 }
 
 export async function addCartItem({ productId, quantity = 1, size = null }) {
-  if (!productId) throw new Error('Product id is required.');
+  if (!productId) {
+    throw new ApiError('Product id is required.', 3000);
+  }
+
+  const token = resolveToken();
+  if (!token) {
+    throw new ApiError('Та эхлээд нэвтэрнэ үү.', 3000);
+  }
+
   return authorizedFetch('/api/cart', {
     method: 'POST',
     body: { product: productId, quantity, size },
@@ -82,7 +99,15 @@ export async function fetchWishlist() {
 }
 
 export async function addWishlistItem(productId) {
-  if (!productId) throw new Error('Product id is required.');
+  if (!productId) {
+    throw new ApiError('Product id is required.', 3000);
+  }
+
+  const token = resolveToken();
+  if (!token) {
+    throw new ApiError('Та эхлээд нэвтэрнэ үү....', 3000);
+  }
+
   return authorizedFetch('/api/wishlist', {
     method: 'POST',
     body: { product: productId },

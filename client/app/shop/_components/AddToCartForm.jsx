@@ -42,11 +42,16 @@ export default function AddToCartForm({ productId, sizes = [], stock = 0 }) {
       });
       setState({ status: 'success', message: 'Сагсанд нэмэгдлээ' });
       setTimeout(() => setState({ status: 'idle', message: '' }), 3000);
-    } catch (error) {
+    } catch (err) {
       setState({
         status: 'error',
-        message: error.message || 'Алдаа гарлаа',
+        message: err.message || 'Алдаа гарлаа',
       });
+
+      const duration = err.duration || 3000;
+      setTimeout(() => {
+        setState({ status: 'idle', message: '' });
+      }, duration);
     }
   };
 
@@ -122,7 +127,7 @@ export default function AddToCartForm({ productId, sizes = [], stock = 0 }) {
           </button>
           {stock > 0 && (
             <span className='ml-2 text-xs uppercase tracking-[0.18em] text-[#4d5544]'>
-              (Үлдэгдэл: {stock})
+              (Үлдэгдэл: {stock > 10 ? '10+' : stock})
             </span>
           )}
         </div>

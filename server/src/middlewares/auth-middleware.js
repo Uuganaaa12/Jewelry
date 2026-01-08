@@ -13,7 +13,7 @@ export const userAuth = (req, res, next) => {
     req.user = verifyToken(req);
     next();
   } catch {
-    res.status(401).json({ message: 'Authentication required' });
+    res.status(401).json({ message: 'Authentication required.' });
   }
 };
 

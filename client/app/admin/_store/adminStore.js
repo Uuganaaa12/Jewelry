@@ -10,6 +10,13 @@ export { API_BASE, resolveToken };
 
 export { getAdminMetrics } from './metrics.js';
 export {
+  getBanners,
+  getBannerDetail,
+  createBanner,
+  updateBanner,
+  deleteBanner,
+} from './banner.js';
+export {
   getProductOverview,
   getProductsByCategory,
   getProductDetail,

@@ -13,11 +13,16 @@ export default function AddToWishlistButton({ productId }) {
       await addWishlistItem(productId);
       setState({ status: 'success', message: 'Хадгалсан' });
       setTimeout(() => setState({ status: 'idle', message: '' }), 2500);
-    } catch (error) {
+    } catch (err) {
       setState({
         status: 'error',
-        message: error.message || 'Алдаа гарлаа',
+        message: err.message || 'Алдаа гарлаа',
       });
+
+      const duration = err.duration || 3000;
+      setTimeout(() => {
+        setState({ status: 'idle', message: '' });
+      }, duration);
     }
   };
 

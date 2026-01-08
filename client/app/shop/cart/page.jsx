@@ -141,15 +141,11 @@ export default function ShopCartPage() {
     <section className='flex flex-col gap-12 text-[#0d0d0d]'>
       <header className='flex flex-col gap-3'>
         <span className='text-xs uppercase tracking-[0.28em] text-[#4d5544]'>
-          Order assembly
+          Захиалга хийх
         </span>
         <h1 className='text-3xl font-semibold uppercase tracking-[0.12em] sm:text-4xl'>
-          Cart
+          Сагс
         </h1>
-        <p className='max-w-2xl text-sm leading-7 text-[#0d0d0d]/70'>
-          Manage live items synced from the Node backend. Update quantities,
-          remove pieces, or move back to browsing.
-        </p>
       </header>
 
       {error && (
@@ -166,9 +162,9 @@ export default function ShopCartPage() {
             </div>
           ) : cart.items.length === 0 ? (
             <div className='border border-[#0d0d0d] bg-[#4d5544]/10 px-6 py-10 text-center text-[11px] uppercase tracking-[0.22em] text-[#4d5544]'>
-              Cart is empty.{' '}
+              Таны сагс хоосон байна.{' '}
               <Link href='/shop/products' className='underline'>
-                Browse products
+                Бүтээгдэхүүн үзэх
               </Link>
             </div>
           ) : (
@@ -254,11 +250,11 @@ export default function ShopCartPage() {
               Summary
             </h2>
             <p className='text-[11px] leading-6 text-[#0d0d0d]/70'>
-              Taxes and shipping populate at checkout once connected.
+              Төлбөр төлөх хэсэгт хүргэлтийн үнэ нэмэгдэнэ.
             </p>
           </div>
           <div className='flex items-center justify-between border-t border-[#0d0d0d] pt-4 text-xs uppercase tracking-[0.2em] text-[#4d5544]'>
-            <span>Subtotal</span>
+            <span>Дүн</span>
             <span className='text-[#0d0d0d]'>
               {formatCurrency(summary.subtotal)}
             </span>
@@ -269,14 +265,14 @@ export default function ShopCartPage() {
               disabled={cart.items.length === 0 || mutatingId === 'clear'}
               onClick={handleClear}
               className='border border-[#0d0d0d] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#0d0d0d] transition-colors hover:bg-[#0d0d0d] hover:text-[#ffffff] disabled:opacity-50'>
-              Clear cart
+              Сагс хоосон болгох
             </button>
             <button
               type='button'
               onClick={handleCheckout}
               disabled={cart.items.length === 0}
               className='border border-[#0d0d0d] bg-[#0d0d0d] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#ffffff] transition-colors hover:bg-[#4d5544] disabled:cursor-not-allowed disabled:opacity-50'>
-              Checkout
+              Төлбөр төлөх
             </button>
           </div>
         </aside>

@@ -76,7 +76,7 @@ export const updateCartItem = async (req, res) => {
 
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).json({ message: 'Сагс хоосон байна.' });
     }
 
     const targetIndex = cart.items.findIndex(item => {
@@ -86,7 +86,7 @@ export const updateCartItem = async (req, res) => {
     });
 
     if (targetIndex === -1) {
-      return res.status(404).json({ message: 'Cart item not found' });
+      return res.status(404).json({ message: 'Сагс хоосон байна.' });
     }
 
     const resolvedQty = resolveQuantity(quantity);
@@ -111,7 +111,7 @@ export const removeFromCart = async (req, res) => {
 
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).json({ message: 'Сагс хоосон байна.' });
     }
 
     const initialLength = cart.items.length;
@@ -122,7 +122,7 @@ export const removeFromCart = async (req, res) => {
     });
 
     if (cart.items.length === initialLength) {
-      return res.status(404).json({ message: 'Cart item not found' });
+      return res.status(404).json({ message: 'Сагс хоосон байна.' });
     }
 
     await cart.save();
@@ -136,7 +136,7 @@ export const removeFromCart = async (req, res) => {
 export const clearCart = async (req, res) => {
   try {
     await Cart.findOneAndDelete({ user: req.user._id });
-    res.json({ message: 'Cart cleared' });
+    res.json({ message: 'Сагс хоосолсон.' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

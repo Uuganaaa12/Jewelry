@@ -59,10 +59,8 @@ export default function AccountOrdersPage() {
     return (
       <div className='flex flex-col gap-3 text-sm'>
         <p className='text-[#0d0d0d]'>Одоогоор захиалга алга байна.</p>
-        <Link
-          href='/shop/products'
-          className='w-fit border border-[#0d0d0d] bg-[#0d0d0d] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white hover:bg-[#4d5544]'>
-          Худалдаж авах
+        <Link href='/shop/products' className='underline'>
+          Бүтээгдэхүүн үзэх
         </Link>
       </div>
     );
