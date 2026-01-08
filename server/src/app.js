@@ -11,12 +11,20 @@ import paymentRoutes from './routes/payment-routes.js';
 import reviewRoutes from './routes/review-routes.js';
 import userRoutes from './routes/user-routes.js';
 import wishlistRoutes from './routes/wishlist-routes.js';
+import pushRoutes from './routes/push-routes.js';
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.CLIENT_ORIGIN,
+  process.env.ADMIN_ORIGIN,
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -35,6 +43,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/push', pushRoutes);
 
 app.get('/', (req, res) => {
   res.send('API running...');

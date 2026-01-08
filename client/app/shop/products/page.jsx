@@ -88,7 +88,7 @@ export default async function ShopProductsPage({ searchParams }) {
   const items = Array.isArray(productResult)
     ? productResult
     : productResult?.items ?? [];
-  console.log('items', items);
+
   const total = !Array.isArray(productResult)
     ? productResult?.total ?? items.length
     : items.length;
@@ -190,6 +190,7 @@ export default async function ShopProductsPage({ searchParams }) {
                           src={product.image}
                           alt={`${product.name} preview`}
                           fill
+                          sizes='(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'
                           className='object-cover transition-transform duration-500 group-hover:scale-110'
                         />
                       ) : (

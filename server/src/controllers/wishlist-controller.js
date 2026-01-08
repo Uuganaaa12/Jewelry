@@ -18,7 +18,6 @@ const ensureProductExists = async productId => {
 
 export const getWishlist = async (req, res) => {
   try {
-    console.log('user');
 
     const user = await User.findById(req.user.id).populate(populateWishlist());
     if (!user) {

@@ -1,21 +1,50 @@
 import Order from '../models/Order.js';
+import { emitOrderCreated } from '../socket.js';
+import { sendOrderPush } from '../utils/push.js';
 
 const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
 
 const ADMIN_MUTABLE_STATUSES = ['shipped', 'delivered', 'cancelled'];
 
 export const createOrder = async (req, res) => {
-  console.log('reqq user', req.user.id);
-  const order = await Order.create({
-    user: req.user.id,
-    items: req.body.items,
-    phone: req.body.phone,
-    address: req.body.address,
-    totalAmount: req.body.totalAmount,
-    paymentMethod: req.body.paymentMethod,
-  });
+  try {
+    console.log('[order] create request by', req.user?.id);
+    // Generate a 5-digit payment code; retry a few times to avoid collisions
+    let paymentCode = String(Math.floor(10000 + Math.random() * 90000));
+    for (let i = 0; i < 4; i++) {
+      const existing = await Order.findOne({ paymentCode });
+      if (!existing) break;
+      paymentCode = String(Math.floor(10000 + Math.random() * 90000));
+    }
 
-  res.status(201).json(order);
+    const order = await Order.create({
+      user: req.user.id,
+      items: req.body.items,
+      phone: req.body.phone,
+      address: req.body.address,
+      totalAmount: req.body.totalAmount,
+      paymentMethod: req.body.paymentMethod,
+      paymentCode,
+    });
+
+    emitOrderCreated({
+      id: order._id?.toString(),
+      total: Number(order.totalAmount) || 0,
+      payment: order.paymentMethod || 'unknown',
+      createdAt: order.createdAt,
+      customer: req.user?.email || req.user?.name || req.user?.id || 'Customer',
+      phone: req.body?.phone || null,
+    });
+
+    sendOrderPush(order).catch(error => {
+      console.warn('Push notification failed', error?.message || error);
+    });
+
+    res.status(201).json(order);
+  } catch (error) {
+    console.error('Failed to create order', error);
+    res.status(500).json({ message: 'Failed to create order' });
+  }
 };
 
 export const getMyOrders = async (req, res) => {
@@ -30,6 +59,7 @@ export const getMyOrders = async (req, res) => {
     id: order._id,
     status: order.status,
     paymentMethod: order.paymentMethod || 'unknown',
+    paymentCode: order.paymentCode || null,
     totalAmount: Number(order.totalAmount) || 0,
     isPaid: Boolean(order.isPaid),
     paidAt: order.paidAt || null,
@@ -130,6 +160,7 @@ export const getOrderDetail = async (req, res) => {
     res.json({
       id: order._id,
       status: order.status,
+      paymentCode: order.paymentCode || null,
       totalAmount: Number(order.totalAmount) || 0,
       paymentMethod: order.paymentMethod || 'unknown',
       isPaid: Boolean(order.isPaid),

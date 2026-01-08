@@ -22,14 +22,12 @@ export default function CheckoutPage() {
     district: '',
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('');
-  console.log('Cart items', cartItems);
+  const [paymentCode, setPaymentCode] = useState('');
 
   const loadCart = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fetchCart();
-      console.log('data:', data);
       setCartItems(data?.items || []);
       setError('');
     } catch (err) {
@@ -46,12 +44,10 @@ export default function CheckoutPage() {
 
   const subtotal = cartItems.reduce((sum, item) => {
     const price = item.product.salePrice ?? item.product.price ?? 0;
-    console.log('price', price);
-     console.log('too', item.quantity);
+
     return sum + price * item.quantity;
   }, 0);
 
-  console.log('sub total', subtotal);
   const shipping = 10.0;
   const total = subtotal + shipping;
 
@@ -60,8 +56,7 @@ export default function CheckoutPage() {
     setStep(2);
   };
 
-  const handlePaymentSubmit = async method => {
-    setPaymentMethod(method);
+  const handlePaymentSubmit = async () => {
     setLoading(true);
 
     try {
@@ -86,7 +81,7 @@ export default function CheckoutPage() {
             shippingInfo.district ? ', ' + shippingInfo.district : ''
           }`,
           totalAmount: total,
-          paymentMethod: method,
+          paymentMethod: 'bank-transfer',
         }),
       });
 
@@ -96,6 +91,7 @@ export default function CheckoutPage() {
 
       const order = await response.json();
       setOrderId(order._id || order.id);
+      setPaymentCode(order.paymentCode || '');
       setStep(3);
     } catch (error) {
       console.error('Order error:', error);
@@ -133,15 +129,20 @@ export default function CheckoutPage() {
 
           {step === 2 && (
             <PaymentForm
-              paymentMethod={paymentMethod}
               loading={loading}
               onBack={() => setStep(1)}
               onSubmit={handlePaymentSubmit}
+              paymentCode={paymentCode}
             />
           )}
 
           {step === 3 && (
-            <SuccessScreen orderId={orderId} paymentMethod={paymentMethod} />
+            <SuccessScreen
+              orderId={orderId}
+              paymentMethod='Банк шилжүүлэг'
+              paymentCode={paymentCode}
+              total={total}
+            />
           )}
         </div>
 

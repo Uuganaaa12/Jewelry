@@ -19,7 +19,7 @@ export default function AddToCartForm({ productId, sizes = [], stock = 0 }) {
       setState({ status: 'error', message: 'Хэмжээ сонгоно уу' });
       return;
     }
-
+    
     if (quantity > stock) {
       setState({
         status: 'error',

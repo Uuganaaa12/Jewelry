@@ -15,7 +15,6 @@ export default async function ShopHome() {
     getFeaturedCategories(),
     getFeaturedProducts(),
   ]);
-  console.log('bara', products.length);
   return (
     <div className='flex flex-col gap-0 text-[#0d0d0d]'>
       {/* Hero Banner Slider */}

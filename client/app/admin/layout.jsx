@@ -1,11 +1,13 @@
 import AdminGate from './_components/AdminGate';
 import AdminHeader from './_components/AdminHeader';
+import AdminOrderNotifications from './_components/AdminOrderNotifications';
 import AdminSidebar from './_components/AdminSidebar';
 import './styles/admin.css';
 
 export default function AdminLayout({ children }) {
   return (
     <AdminGate>
+      <AdminOrderNotifications />
       <div className='admin-shell flex min-h-screen bg-[#ffffff]'>
         {/* Fixed Sidebar */}
         <div className='fixed left-0 top-0 h-screen w-64'>

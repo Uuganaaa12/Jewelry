@@ -27,7 +27,7 @@ export default function OrderSummary({ cartItems, subtotal, shipping, total }) {
 }
 
 function CartItem({ item }) {
-  console.log('item', item);
+
   return (
     <div className='flex items-center justify-between text-xs'>
       <div className='flex flex-col gap-1'>

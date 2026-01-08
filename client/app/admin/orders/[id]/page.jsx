@@ -123,10 +123,10 @@ export default function AdminOrderDetailPage() {
               loading ? 'admin-placeholder' : ''
             } border border-[#0d0d0d] bg-[#ffffff] px-4 py-4`}>
             <span className='text-[11px] uppercase tracking-[0.2em] text-[#4d5544]'>
-              Payment method
+              Payment code
             </span>
             <p className='mt-2 text-lg uppercase tracking-[0.16em]'>
-              {loading ? '' : detail?.paymentMethod || 'Unknown'}
+              {loading ? '' : detail?.paymentCode || '—'}
             </p>
           </div>
           <div
@@ -161,11 +161,13 @@ export default function AdminOrderDetailPage() {
           </header>
           <div className='divide-y divide-[#0d0d0d]'>
             {(loading ? PLACEHOLDER_ITEMS : items).map((item, index) => {
-              const key = item?.productId || `order-item-${index}`;
+              const key =
+                item?.productId + (item?.size ? `-${item.size}` : `-${index}`);
               const skeleton = loading || !item;
               const subtotal = skeleton
                 ? ''
                 : `${(item.subtotal || 0).toFixed(0)}₮`;
+
               return (
                 <div
                   key={key}

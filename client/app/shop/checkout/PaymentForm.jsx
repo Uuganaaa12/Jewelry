@@ -1,90 +1,67 @@
-import { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
-const PAYMENT_METHODS = [
-  {
-    value: 'card',
-    title: 'Карт',
-    description: 'Visa, Mastercard, American Express',
-  },
-  {
-    value: 'qpay',
-    title: 'QPay',
-    description: 'Гар утасны апп ашиглан',
-  },
-];
+const BANK_NAME = process.env.NEXT_PUBLIC_BANK_NAME || 'KhanBank';
+const BANK_ACCOUNT = process.env.NEXT_PUBLIC_BANK_ACCOUNT || '5156215729';
+const BANK_HOLDER = process.env.NEXT_PUBLIC_BANK_HOLDER || 'UuganBayar';
+import { clearCart } from '@/app/shop/_store/shopActions';
 
 export default function PaymentForm({
-  paymentMethod,
   loading,
   onBack,
   onSubmit,
+  paymentCode,
 }) {
-  const [selectedMethod, setSelectedMethod] = useState(paymentMethod);
-
   const handleSubmit = () => {
-    if (selectedMethod) {
-      onSubmit(selectedMethod);
+    onSubmit();
+  };
+  const handleClear = async () => {
+    try {
+      await clearCart();
+    } catch (err) {
+      setError(err.message || 'Failed to clear cart.');
     }
   };
-
   return (
     <div className='flex flex-col gap-6'>
       <button
         type='button'
         onClick={onBack}
-        className='flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#4d5544] hover:text-[#0d0d0d]'>
+        className='flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#4d5544] hover:text-[#0d0d0d] hover:cursor-pointer'>
         <ChevronLeft size={16} />
         Буцах
       </button>
 
       <div className='flex flex-col gap-6 border border-[#0d0d0d] bg-[#ffffff] px-6 py-6'>
         <h2 className='text-lg font-semibold uppercase tracking-[0.18em]'>
-          Төлбөрийн хэрэгсэл
+          Төлбөр шилжүүлэх заавар
         </h2>
-
-        <div className='flex flex-col gap-4'>
-          {PAYMENT_METHODS.map(method => (
-            <PaymentOption
-              key={method.value}
-              value={method.value}
-              title={method.title}
-              description={method.description}
-              selected={selectedMethod === method.value}
-              onSelect={setSelectedMethod}
-            />
-          ))}
+        <p className='text-sm leading-6 text-[#0d0d0d]/70'>
+          Захиалга баталгаажсаны дараа 5 оронтой код үүснэ. Тэр кодыг гүйлгээний
+          утганд бичиж, дэлгүүрийн харилцах данс руу шилжүүлээд "Төлбөр хийсэн"
+          товчыг дарна уу.
+        </p>
+        <div className='grid gap-2 rounded-md border border-[#0d0d0d] bg-[#f7f7f7] px-4 py-3 text-sm uppercase tracking-[0.12em] text-[#0d0d0d]'>
+          <span className='font-semibold'>БАНКИНД ШИЛЖҮҮЛЭХ ЗААВАР</span>
+          <span className='text-[12px] text-[#4d5544]'>
+            Доорх данс руу 5 оронтой кодоо (жишээ: 23686) гүйлгээний утганд
+            бичиж шилжүүлнэ үү.
+          </span>
+          <span>{BANK_NAME}</span>
+          <span>{BANK_ACCOUNT}</span>
+          <span>{BANK_HOLDER}</span>
+          <span className='text-[12px] text-[#4d5544]'>{paymentCode}</span>
         </div>
-
         <button
           type='button'
-          onClick={handleSubmit}
-          disabled={!selectedMethod || loading}
+          onClick={async () => {
+            await handleSubmit();
+            await handleClear();
+          }}
+          disabled={loading}
           className='border border-[#0d0d0d] bg-[#0d0d0d] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#ffffff] transition-colors hover:bg-[#4d5544] disabled:cursor-not-allowed disabled:opacity-50'>
-          {loading ? 'Боловсруулж байна...' : 'Төлбөр хийх'}
+          {loading ? 'Боловсруулж байна...' : 'Төлбөр хийсэн'}
         </button>
       </div>
     </div>
-  );
-}
-
-function PaymentOption({ value, title, description, selected, onSelect }) {
-  return (
-    <label className='flex cursor-pointer items-center gap-4 border border-[#0d0d0d] p-4 transition-colors hover:bg-[#4d5544]/5'>
-      <input
-        type='radio'
-        name='payment'
-        value={value}
-        checked={selected}
-        onChange={e => onSelect(e.target.value)}
-        className='h-4 w-4'
-      />
-      <div className='flex flex-col gap-1'>
-        <span className='text-sm font-semibold uppercase tracking-[0.18em]'>
-          {title}
-        </span>
-        <span className='text-xs text-[#0d0d0d]/70'>{description}</span>
-      </div>
-    </label>
   );
 }
