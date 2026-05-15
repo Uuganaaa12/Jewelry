@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+const STORAGE_KEY = 'luna_chat_history';
 
 const MODES = [
   { id: 'zero_shot',  label: 'Zero-shot',       desc: 'Шууд хариулт' },
@@ -50,9 +51,29 @@ export default function ChatBot() {
   const [loading, setLoading] = useState(false);
   const endRef = useRef(null);
 
+  // localStorage-с history ачаална
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setMsgs(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  // msgs өөрчлөгдөх бүрт хадгална
+  useEffect(() => {
+    try {
+      if (msgs.length > 0) localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs.slice(-50)));
+    } catch {}
+  }, [msgs]);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [msgs, loading]);
+
+  function clearHistory() {
+    setMsgs([]);
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  }
 
   async function send(e) {
     e.preventDefault();
@@ -98,6 +119,11 @@ export default function ChatBot() {
               <div style={{ color: '#fff', fontWeight: 800, fontSize: 15, letterSpacing: '0.04em' }}>Luna AI</div>
               <div style={{ color: '#a8e6ed', fontSize: 11 }}>Үнэт эдлэлийн мэргэжилтэн</div>
             </div>
+            {msgs.length > 0 && (
+              <button onClick={clearHistory} title='Цэвэрлэх' style={{ color: 'rgba(255,255,255,0.65)', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', borderRadius: 6, padding: '4px 8px', fontSize: 11, fontWeight: 600, marginRight: 4 }}>
+                Цэвэрлэх
+              </button>
+            )}
             <button onClick={() => setOpen(false)} style={{ color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: 4 }}>×</button>
           </div>
 
