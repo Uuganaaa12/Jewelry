@@ -15,10 +15,17 @@ const SYSTEM_BASE = `Чи бол Luna Jewelry үнэт эдлэлийн дэлг
 
 async function getProducts() {
   const products = await Product.find({ stock: { $gt: 0 } })
-    .select('name price salePrice saleActive tags description')
+    .select('name price salePrice saleActive tags description images _id')
     .limit(20)
     .lean();
-  return products.map(p => `${p.name} — ${p.price}₮ ${p.tags?.join(', ') || ''}`).join('\n');
+  return products;
+}
+
+function matchProducts(products, reply) {
+  const lower = reply.toLowerCase();
+  return products
+    .filter(p => lower.includes(p.name.toLowerCase()) || (p.tags || []).some(t => lower.includes(t.toLowerCase())))
+    .slice(0, 5);
 }
 
 function buildPrompt(message, mode, history) {
@@ -78,10 +85,9 @@ export async function chat(req, res) {
   }
 
   try {
-    const productList = await getProducts();
+    const allProducts = await getProducts();
+    const productList = allProducts.map(p => `${p.name} — ${p.price}₮ ${(p.tags||[]).join(', ')}`).join('\n');
     const messages = buildPrompt(message, mode, history);
-
-    // Бараануудын мэдээлэл system дотор нэмнэ
     messages[0].content += `\n\nМанай бараануудын жагсаалт:\n${productList}`;
 
     const resp = await openai.chat.completions.create({
@@ -92,7 +98,8 @@ export async function chat(req, res) {
     });
 
     const reply = resp.choices[0].message.content.trim();
-    res.json({ reply });
+    const products = matchProducts(allProducts, reply);
+    res.json({ reply, products });
   } catch (err) {
     console.error('[Chat]', err.message);
     res.status(500).json({ error: 'Түр алдаа гарлаа' });
