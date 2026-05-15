@@ -231,17 +231,16 @@ export default async function ShopProductsPage({ searchParams }) {
                   </>
                 );
 
-                return hasCategory ? (
+                return (
                   <Link
                     key={product.id}
-                    href={`/shop/categories/${product.category.id}/products/${product.id}`}
+                    href={hasCategory
+                      ? `/shop/categories/${product.category.id}/products/${product.id}`
+                      : `/products/${product.id}`
+                    }
                     className={cardClass}>
                     {content}
                   </Link>
-                ) : (
-                  <article key={product.id} className={cardClass}>
-                    {content}
-                  </article>
                 );
               })}
 
