@@ -1,5 +1,6 @@
 import ShopFooter from './_components/ShopFooter';
 import ShopHeader from './_components/ShopHeader';
+import ChatBot from './_components/ChatBot';
 
 export default function ShopLayout({ children }) {
   return (
@@ -11,6 +12,7 @@ export default function ShopLayout({ children }) {
         </div>
       </main>
       <ShopFooter />
+      <ChatBot />
     </div>
   );
 }
