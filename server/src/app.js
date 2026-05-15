@@ -12,6 +12,7 @@ import reviewRoutes from './routes/review-routes.js';
 import userRoutes from './routes/user-routes.js';
 import wishlistRoutes from './routes/wishlist-routes.js';
 import pushRoutes from './routes/push-routes.js';
+import messengerRoutes from './routes/messenger-routes.js';
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/webhook', messengerRoutes);
 
 app.get('/', (req, res) => {
   res.send('API running...');
