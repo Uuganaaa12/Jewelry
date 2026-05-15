@@ -21,11 +21,21 @@ const allowedOrigins = [
   process.env.ADMIN_ORIGIN,
   'http://localhost:3000',
   'http://127.0.0.1:3000',
+  'https://www.hooson.space',
+  'https://hooson.space',
 ].filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      // Allow any vercel.app subdomain
+      if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   })
 );
