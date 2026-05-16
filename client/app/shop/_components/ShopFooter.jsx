@@ -3,8 +3,8 @@ import Link from 'next/link';
 export default function ShopFooter() {
   return (
     <footer className='border-t border-[#0d0d0d] bg-[#ffffff]'>
-      <div className='mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10 md:flex-row md:items-start md:justify-between'>
-        <div className='max-w-md text-[#0d0d0d]'>
+      <div className='mx-auto flex w-full max-w-6xl flex-col gap-8 py-10 md:flex-row md:items-start md:justify-between'>
+        <div className='max-w-sm text-[#0d0d0d]'>
           <h2 className='text-sm font-semibold uppercase tracking-[0.26em]'>
             Atelier dispatch
           </h2>
