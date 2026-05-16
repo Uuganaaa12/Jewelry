@@ -74,14 +74,15 @@ async function classifyIntent(text, history = []) {
         content: `Та үнэт эдлэлийн дэлгүүрийн AI туслах.
 Өмнөх харилцааны контекстыг харгалзан хэрэглэгчийн мессежийг задлаад JSON буцаа:
 {
-  "intent": "search" | "question" | "greeting" | "other",
+  "intent": "search" | "question" | "purchase" | "greeting" | "other",
   "search_query": "хайлтын үг эсвэл null",
-  "reply": "question/greeting/other бол Монголоор богино хариулт"
+  "reply": "question/greeting/other/purchase бол Монголоор богино хариулт"
 }
-search: бараа хайж байна
+search: тодорхой бараа хайж байна (бараа нэр, төрөл, материал дурдсан)
 question: үнэ, хүргэлт, буцаалт, харьцуулалт гэх мэт асуулт
+purchase: "авмаар байна", "захиалмаар байна", "авна", "авч болох уу", "захиалах" гэх мэт худалдан авах хүсэл
 greeting: мэндчилгээ
-ЧУХАЛ: Өмнөх харилцааг ашиглан контекстоо ойлго. "аль нь үнэтэй" гэхэд өмнөх бараануудыг харгалз.`,
+ЧУХАЛ: Өмнөх харилцааг ашиглан контекстыг ойлго. "авмаар байна" гэхэд search биш purchase.`,
       },
       ...history,
       { role: 'user', content: text },
@@ -242,8 +243,29 @@ async function handleMessage(senderId, messageText) {
     }
 
     if (intent.intent === 'question') {
-      // Контекстыг харгалзан AI-аар хариулт үүсгэнэ
       const reply = await answerWithContext(text, history);
+      addHistory(senderId, 'assistant', reply);
+      await sendText(senderId, reply);
+      return;
+    }
+
+    if (intent.intent === 'purchase') {
+      // Өмнө ярьсан бараагаа олно
+      const prevProducts = await answerWithContext(
+        'Өмнөх ярианд ямар бараа дурдсан бэ? Зөвхөн бараа нэрийг хэл.',
+        history
+      );
+      const searchQ = prevProducts.replace(/[^\wа-яөүА-ЯӨҮa-zA-Z\s]/g, '').trim();
+      const found = await searchProducts(searchQ || text);
+
+      let reply;
+      if (found.length) {
+        const p = found[0];
+        const price = p.saleActive && p.salePrice ? p.salePrice : p.price;
+        reply = `${p.name} авахын тулд манай сайтаар орж захиалаарай:\n${CLIENT_URL}/products/${p._id}\n\nҮнэ: ${price.toLocaleString()}₮`;
+      } else {
+        reply = `Захиалгын тулд манай сайтаар орно уу:\n${CLIENT_URL}/shop/products`;
+      }
       addHistory(senderId, 'assistant', reply);
       await sendText(senderId, reply);
       return;
