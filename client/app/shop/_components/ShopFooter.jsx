@@ -62,7 +62,7 @@ export default function ShopFooter() {
               </a>
             </div>
           </nav>
-          <div className='mt-4 flex flex-col gap-2 text-xs text-[#0d0d0d]/70'>
+          <div className='mt-4 flex flex-row gap-2 text-xs text-[#0d0d0d]/70'>
             <div className='flex items-start gap-2'>
               <svg
                 width='14'
@@ -81,13 +81,6 @@ export default function ShopFooter() {
               target='_blank'
               rel='noopener noreferrer'
               className='inline-flex items-center gap-2 border border-[#0d0d0d] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#0d0d0d] transition-colors hover:bg-[#0d0d0d] hover:text-white w-fit'>
-              <svg
-                width='13'
-                height='13'
-                viewBox='0 0 24 24'
-                fill='currentColor'>
-                <path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z' />
-              </svg>
               Google Maps-д харах
             </Link>
           </div>
