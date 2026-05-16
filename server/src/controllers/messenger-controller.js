@@ -99,10 +99,14 @@ bараа = бараа → search
     ],
   });
 
-  const raw = resp.choices[0].message.content
-    .replace(/```json|```/g, '')
-    .trim();
-  return JSON.parse(raw);
+  const raw = resp.choices[0].message.content.replace(/```json|```/g, '').trim();
+  try {
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    return JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+  } catch {
+    // JSON parse алдаатай бол question гэж үзнэ
+    return { intent: 'question', search_query: null, reply: null };
+  }
 }
 
 async function answerWithContext(text, history) {
@@ -324,14 +328,17 @@ async function handleMessage(senderId, messageText) {
     await sendProductCards(senderId, products);
   } catch (err) {
     console.error('[Messenger] error:', err.message);
-    // AI алдаартай бол keyword search-рүү буцна
     try {
+      // Эхлээд keyword search
       const products = await searchProducts(text);
       if (products.length) {
         await sendText(senderId, `${products.length} бараа олдлоо:`);
         await sendProductCards(senderId, products);
       } else {
-        await sendText(senderId, 'Түр алдаа гарлаа. Дахин оролдоно уу.');
+        // Бараа олдохгүй бол answerWithContext-ээр хариулна
+        const fallback = await answerWithContext(text, getHistory(senderId));
+        addHistory(senderId, 'assistant', fallback);
+        await sendText(senderId, fallback);
       }
     } catch {
       await sendText(senderId, 'Түр алдаа гарлаа. Дахин оролдоно уу.');
