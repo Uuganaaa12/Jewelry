@@ -3,7 +3,9 @@ import OpenAI from 'openai';
 import Product from '../models/Product.js';
 
 const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
-const CLIENT_URL = (process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '');
+const CLIENT_URL = (
+  process.env.CLIENT_ORIGIN || 'http://localhost:3000'
+).replace(/\/$/, '');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -25,29 +27,29 @@ function addHistory(senderId, role, content) {
 
 // ── Mongolian keyword → search terms ─────────────────────
 const MN_DICT = {
-  'бөгж':    ['бөгж', 'ring'],
-  'зүүлт':  ['зүүлт', 'earring'],
-  'бугуйвч':['бугуйвч', 'bracelet'],
-  'гинж':   ['гинж', 'necklace', 'chain'],
-  'зүүн':   ['зүүн', 'pendant'],
-  'алт':    ['алт', 'алтан', 'gold'],
-  'алтан':  ['алтан', 'алт', 'gold'],
-  'мөнгө':  ['мөнгө', 'мөнгөн', 'silver'],
-  'мөнгөн': ['мөнгөн', 'мөнгө', 'silver'],
-  'хаш':    ['хаш', 'jade'],
-  'чулуу':  ['чулуу', 'stone', 'gem'],
-  'эрдэнэ': ['эрдэнэ', 'gem', 'stone'],
-  'тэмдэг': ['тэмдэг', 'symbol'],
-  'хосын':  ['хос', 'couple', 'pair'],
-  'хос':    ['хос', 'couple', 'pair'],
-  'нарийн': ['нарийн', 'thin', 'delicate'],
-  'том':    ['том', 'big', 'large'],
-  'жижиг':  ['жижиг', 'small', 'mini'],
-  'эмэгтэй':['эмэгтэй', 'women', 'female'],
-  'эрэгтэй':['эрэгтэй', 'men', 'male'],
-  'хүүхэд': ['хүүхэд', 'kids', 'children'],
-  'хямд':   ['хямд', 'sale', 'discount'],
-  'шинэ':   ['шинэ', 'new'],
+  бөгж: ['бөгж', 'ring'],
+  зүүлт: ['зүүлт', 'earring'],
+  бугуйвч: ['бугуйвч', 'bracelet'],
+  гинж: ['гинж', 'necklace', 'chain'],
+  зүүн: ['зүүн', 'pendant'],
+  алт: ['алт', 'алтан', 'gold'],
+  алтан: ['алтан', 'алт', 'gold'],
+  мөнгө: ['мөнгө', 'мөнгөн', 'silver'],
+  мөнгөн: ['мөнгөн', 'мөнгө', 'silver'],
+  хаш: ['хаш', 'jade'],
+  чулуу: ['чулуу', 'stone', 'gem'],
+  эрдэнэ: ['эрдэнэ', 'gem', 'stone'],
+  тэмдэг: ['тэмдэг', 'symbol'],
+  хосын: ['хос', 'couple', 'pair'],
+  хос: ['хос', 'couple', 'pair'],
+  нарийн: ['нарийн', 'thin', 'delicate'],
+  том: ['том', 'big', 'large'],
+  жижиг: ['жижиг', 'small', 'mini'],
+  эмэгтэй: ['эмэгтэй', 'women', 'female'],
+  эрэгтэй: ['эрэгтэй', 'men', 'male'],
+  хүүхэд: ['хүүхэд', 'kids', 'children'],
+  хямд: ['хямд', 'sale', 'discount'],
+  шинэ: ['шинэ', 'new'],
 };
 
 function expandKeywords(text) {
@@ -66,7 +68,7 @@ function expandKeywords(text) {
 // ── AI: мессежийн төрлийг тодорхойлно ────────────────────
 async function classifyIntent(text, history = []) {
   const resp = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-4.1-mini',
     temperature: 0,
     messages: [
       {
@@ -89,7 +91,9 @@ greeting: мэндчилгээ
     ],
   });
 
-  const raw = resp.choices[0].message.content.replace(/```json|```/g, '').trim();
+  const raw = resp.choices[0].message.content
+    .replace(/```json|```/g, '')
+    .trim();
   return JSON.parse(raw);
 }
 
@@ -103,13 +107,16 @@ async function answerWithContext(text, history) {
 
   const productList = products
     .map(p => {
-      const price = p.saleActive && p.salePrice ? `${p.salePrice.toLocaleString()}₮ (хямдарсан)` : `${p.price.toLocaleString()}₮`;
+      const price =
+        p.saleActive && p.salePrice
+          ? `${p.salePrice.toLocaleString()}₮ (хямдарсан)`
+          : `${p.price.toLocaleString()}₮`;
       return `- ${p.name}: ${price}`;
     })
     .join('\n');
 
   const resp = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-4.1-mini',
     temperature: 0.5,
     messages: [
       {
@@ -156,9 +163,10 @@ function fmtPrice(p) {
 // ── Build Messenger Generic Template elements ─────────────
 function buildElements(products) {
   return products.slice(0, 5).map(p => {
-    const subtitle = p.saleActive && p.salePrice
-      ? `${fmtPrice(p.salePrice)} (${fmtPrice(p.price)}-с хямдарсан)`
-      : fmtPrice(p.price);
+    const subtitle =
+      p.saleActive && p.salePrice
+        ? `${fmtPrice(p.salePrice)} (${fmtPrice(p.price)}-с хямдарсан)`
+        : fmtPrice(p.price);
 
     return {
       title: p.name,
@@ -233,10 +241,13 @@ async function handleMessage(senderId, messageText) {
 
   try {
     const intent = await classifyIntent(text, history);
-    console.log(`[AI] intent: ${intent.intent} | query: ${intent.search_query}`);
+    console.log(
+      `[AI] intent: ${intent.intent} | query: ${intent.search_query}`,
+    );
 
     if (intent.intent === 'greeting') {
-      const reply = 'Сайн байна уу! Luna Jewelry-д тавтай морилно уу.\n\nХайж буй бараагаа бичнэ үү:\n• "алтан бөгж"\n• "мөнгөн зүүлт"\n• "хос бугуйвч"';
+      const reply =
+        'Сайн байна уу! Luna Jewelry-д тавтай морилно уу.\n\nХайж буй бараагаа бичнэ үү:\n• "алтан бөгж"\n• "мөнгөн зүүлт"\n• "хос бугуйвч"';
       addHistory(senderId, 'assistant', reply);
       await sendText(senderId, reply);
       return;
@@ -252,7 +263,8 @@ async function handleMessage(senderId, messageText) {
     if (intent.intent === 'purchase') {
       // History-с assistant-ын сүүлийн мессежэд дурдсан бараа нэрийг олно
       const assistantMsgs = history.filter(m => m.role === 'assistant');
-      const lastAssistant = assistantMsgs[assistantMsgs.length - 1]?.content || '';
+      const lastAssistant =
+        assistantMsgs[assistantMsgs.length - 1]?.content || '';
 
       // DB-с бүх бараа авж, хамгийн тохирохыг нэрээр хайна
       const allProducts = await Product.find({ stock: { $gt: 0 } })
@@ -261,12 +273,15 @@ async function handleMessage(senderId, messageText) {
 
       // Сүүлийн assistant мессежэд нэр нь орсон бараа
       const matched = allProducts.find(p =>
-        lastAssistant.toLowerCase().includes(p.name.toLowerCase())
+        lastAssistant.toLowerCase().includes(p.name.toLowerCase()),
       );
 
       let reply;
       if (matched) {
-        const price = matched.saleActive && matched.salePrice ? matched.salePrice : matched.price;
+        const price =
+          matched.saleActive && matched.salePrice
+            ? matched.salePrice
+            : matched.price;
         reply = `${matched.name} авахын тулд дор хаяна сайтаар орж захиалаарай:\n${CLIENT_URL}/products/${matched._id}\n\nҮнэ: ${price.toLocaleString()}₮`;
       } else {
         reply = `Захиалгын тулд манай сайтаар орно уу:\n${CLIENT_URL}/shop/products`;
@@ -290,10 +305,13 @@ async function handleMessage(senderId, messageText) {
     }
 
     const foundMsg = `${products.length} бараа олдлоо:`;
-    addHistory(senderId, 'assistant', foundMsg + ' ' + products.map(p => p.name).join(', '));
+    addHistory(
+      senderId,
+      'assistant',
+      foundMsg + ' ' + products.map(p => p.name).join(', '),
+    );
     await sendText(senderId, foundMsg);
     await sendProductCards(senderId, products);
-
   } catch (err) {
     console.error('[Messenger] error:', err.message);
     // AI алдаартай бол keyword search-рүү буцна
