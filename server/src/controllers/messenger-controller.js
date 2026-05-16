@@ -7,6 +7,22 @@ const CLIENT_URL = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// ── Хэрэглэгч бүрийн харилцааны түүх (in-memory, 30 мин TTL) ──
+const convHistory = new Map();
+const HISTORY_TTL = 30 * 60 * 1000; // 30 минут
+
+function getHistory(senderId) {
+  const entry = convHistory.get(senderId);
+  if (!entry || Date.now() - entry.ts > HISTORY_TTL) return [];
+  return entry.msgs;
+}
+
+function addHistory(senderId, role, content) {
+  const prev = getHistory(senderId);
+  const msgs = [...prev, { role, content }].slice(-10); // сүүлийн 10 мессеж
+  convHistory.set(senderId, { msgs, ts: Date.now() });
+}
+
 // ── Mongolian keyword → search terms ─────────────────────
 const MN_DICT = {
   'бөгж':    ['бөгж', 'ring'],
@@ -48,7 +64,7 @@ function expandKeywords(text) {
 }
 
 // ── AI: мессежийн төрлийг тодорхойлно ────────────────────
-async function classifyIntent(text) {
+async function classifyIntent(text, history = []) {
   const resp = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     temperature: 0,
@@ -56,22 +72,43 @@ async function classifyIntent(text) {
       {
         role: 'system',
         content: `Та үнэт эдлэлийн дэлгүүрийн AI туслах.
-Хэрэглэгчийн мессежийг задлаад JSON буцаа:
+Өмнөх харилцааны контекстыг харгалзан хэрэглэгчийн мессежийг задлаад JSON буцаа:
 {
   "intent": "search" | "question" | "greeting" | "other",
   "search_query": "хайлтын үг эсвэл null",
   "reply": "question/greeting/other бол Монголоор богино хариулт"
 }
 search: бараа хайж байна
-question: үнэ, хүргэлт, буцаалт гэх мэт асуулт
-greeting: мэндчилгээ`,
+question: үнэ, хүргэлт, буцаалт, харьцуулалт гэх мэт асуулт
+greeting: мэндчилгээ
+ЧУХАЛ: Өмнөх харилцааг ашиглан контекстоо ойлго. "аль нь үнэтэй" гэхэд өмнөх бараануудыг харгалз.`,
       },
+      ...history,
       { role: 'user', content: text },
     ],
   });
 
   const raw = resp.choices[0].message.content.replace(/```json|```/g, '').trim();
   return JSON.parse(raw);
+}
+
+async function answerWithContext(text, history) {
+  const resp = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    temperature: 0.7,
+    messages: [
+      {
+        role: 'system',
+        content: `Та Luna Jewelry үнэт эдлэлийн дэлгүүрийн AI туслах.
+Өмнөх харилцааны контекстыг ашиглан Монголоор товч, тодорхой хариул.
+Үнэ, хүргэлт, харьцуулалт, зөвлөгөөний асуултад мэдлэгтэйгээр хариул.
+CLIENT_URL: ${CLIENT_URL}`,
+      },
+      ...history,
+      { role: 'user', content: text },
+    ],
+  });
+  return resp.choices[0].message.content.trim();
 }
 
 // ── Search products in MongoDB ────────────────────────────
@@ -168,22 +205,26 @@ async function handleMessage(senderId, messageText) {
   if (!messageText?.trim()) return;
   const text = messageText.trim();
 
+  // Түүхийг ачаална
+  const history = getHistory(senderId);
+  addHistory(senderId, 'user', text);
+
   try {
-    const intent = await classifyIntent(text);
+    const intent = await classifyIntent(text, history);
     console.log(`[AI] intent: ${intent.intent} | query: ${intent.search_query}`);
 
     if (intent.intent === 'greeting') {
-      await sendText(
-        senderId,
-        'Сайн байна уу! Luna Jewelry-д тавтай морилно уу.\n\n' +
-        'Хайж буй бараагаа бичнэ үү:\n' +
-        '• "алтан бөгж"\n• "мөнгөн зүүлт"\n• "хос бугуйвч"'
-      );
+      const reply = 'Сайн байна уу! Luna Jewelry-д тавтай морилно уу.\n\nХайж буй бараагаа бичнэ үү:\n• "алтан бөгж"\n• "мөнгөн зүүлт"\n• "хос бугуйвч"';
+      addHistory(senderId, 'assistant', reply);
+      await sendText(senderId, reply);
       return;
     }
 
-    if (intent.intent === 'question' && intent.reply) {
-      await sendText(senderId, intent.reply);
+    if (intent.intent === 'question') {
+      // Контекстыг харгалзан AI-аар хариулт үүсгэнэ
+      const reply = await answerWithContext(text, history);
+      addHistory(senderId, 'assistant', reply);
+      await sendText(senderId, reply);
       return;
     }
 
@@ -194,14 +235,15 @@ async function handleMessage(senderId, messageText) {
     const products = await searchProducts(query);
 
     if (!products.length) {
-      await sendText(
-        senderId,
-        `"${query}" бараа олдсонгүй.\n\nӨөр үгээр хайж үзнэ үү.\nБүх бараа: ${CLIENT_URL}`
-      );
+      const reply = `"${query}" бараа олдсонгүй.\n\nӨөр үгээр хайж үзнэ үү.\nБүх бараа: ${CLIENT_URL}`;
+      addHistory(senderId, 'assistant', reply);
+      await sendText(senderId, reply);
       return;
     }
 
-    await sendText(senderId, `${products.length} бараа олдлоо:`);
+    const foundMsg = `${products.length} бараа олдлоо:`;
+    addHistory(senderId, 'assistant', foundMsg + ' ' + products.map(p => p.name).join(', '));
+    await sendText(senderId, foundMsg);
     await sendProductCards(senderId, products);
 
   } catch (err) {
