@@ -261,31 +261,25 @@ async function handleMessage(senderId, messageText) {
     }
 
     if (intent.intent === 'purchase') {
-      // History-с assistant-ын сүүлийн мессежэд дурдсан бараа нэрийг олно
       const assistantMsgs = history.filter(m => m.role === 'assistant');
-      const lastAssistant =
-        assistantMsgs[assistantMsgs.length - 1]?.content || '';
+      const lastAssistant = assistantMsgs[assistantMsgs.length - 1]?.content || '';
 
-      // DB-с бүх бараа авж, хамгийн тохирохыг нэрээр хайна
       const allProducts = await Product.find({ stock: { $gt: 0 } })
-        .select('name price salePrice saleActive _id')
+        .select('name price salePrice saleActive images _id')
         .lean();
 
-      // Сүүлийн assistant мессежэд нэр нь орсон бараа
       const matched = allProducts.find(p =>
         lastAssistant.toLowerCase().includes(p.name.toLowerCase()),
       );
 
-      let reply;
       if (matched) {
-        const price =
-          matched.saleActive && matched.salePrice
-            ? matched.salePrice
-            : matched.price;
-        reply = `${matched.name} авахын тулд дор хаяна сайтаар орж захиалаарай:\n${CLIENT_URL}/products/${matched._id}\n\nҮнэ: ${price.toLocaleString()}₮`;
-      } else {
-        reply = `Захиалгын тулд манай сайтаар орно уу:\n${CLIENT_URL}/shop/products`;
+        addHistory(senderId, 'assistant', `${matched.name} карт илгээгдлээ`);
+        await sendText(senderId, 'Захиалахын тулд доорх карт дарна уу:');
+        await sendProductCards(senderId, [matched]);
+        return;
       }
+
+      const reply = `Захиалгын тулд манай сайтаар орно уу:\n${CLIENT_URL}/shop/products`;
       addHistory(senderId, 'assistant', reply);
       await sendText(senderId, reply);
       return;
