@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import Product from '../models/Product.js';
 
 const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
-const CLIENT_URL = process.env.CLIENT_ORIGIN || 'http://localhost:3000';
+const CLIENT_URL = (process.env.CLIENT_ORIGIN || 'http://localhost:3000').replace(/\/$/, '');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -250,19 +250,24 @@ async function handleMessage(senderId, messageText) {
     }
 
     if (intent.intent === 'purchase') {
-      // Өмнө ярьсан бараагаа олно
-      const prevProducts = await answerWithContext(
-        'Өмнөх ярианд ямар бараа дурдсан бэ? Зөвхөн бараа нэрийг хэл.',
-        history
+      // History-с assistant-ын сүүлийн мессежэд дурдсан бараа нэрийг олно
+      const assistantMsgs = history.filter(m => m.role === 'assistant');
+      const lastAssistant = assistantMsgs[assistantMsgs.length - 1]?.content || '';
+
+      // DB-с бүх бараа авж, хамгийн тохирохыг нэрээр хайна
+      const allProducts = await Product.find({ stock: { $gt: 0 } })
+        .select('name price salePrice saleActive _id')
+        .lean();
+
+      // Сүүлийн assistant мессежэд нэр нь орсон бараа
+      const matched = allProducts.find(p =>
+        lastAssistant.toLowerCase().includes(p.name.toLowerCase())
       );
-      const searchQ = prevProducts.replace(/[^\wа-яөүА-ЯӨҮa-zA-Z\s]/g, '').trim();
-      const found = await searchProducts(searchQ || text);
 
       let reply;
-      if (found.length) {
-        const p = found[0];
-        const price = p.saleActive && p.salePrice ? p.salePrice : p.price;
-        reply = `${p.name} авахын тулд манай сайтаар орж захиалаарай:\n${CLIENT_URL}/products/${p._id}\n\nҮнэ: ${price.toLocaleString()}₮`;
+      if (matched) {
+        const price = matched.saleActive && matched.salePrice ? matched.salePrice : matched.price;
+        reply = `${matched.name} авахын тулд дор хаяна сайтаар орж захиалаарай:\n${CLIENT_URL}/products/${matched._id}\n\nҮнэ: ${price.toLocaleString()}₮`;
       } else {
         reply = `Захиалгын тулд манай сайтаар орно уу:\n${CLIENT_URL}/shop/products`;
       }
