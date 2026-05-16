@@ -93,16 +93,37 @@ greeting: мэндчилгээ
 }
 
 async function answerWithContext(text, history) {
+  // Бодит бараа, үнийг DB-с авна
+  const products = await Product.find({ stock: { $gt: 0 } })
+    .select('name price salePrice saleActive tags description')
+    .sort({ price: -1 })
+    .limit(15)
+    .lean();
+
+  const productList = products
+    .map(p => {
+      const price = p.saleActive && p.salePrice ? `${p.salePrice.toLocaleString()}₮ (хямдарсан)` : `${p.price.toLocaleString()}₮`;
+      return `- ${p.name}: ${price}`;
+    })
+    .join('\n');
+
   const resp = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
-    temperature: 0.7,
+    temperature: 0.5,
     messages: [
       {
         role: 'system',
         content: `Та Luna Jewelry үнэт эдлэлийн дэлгүүрийн AI туслах.
-Өмнөх харилцааны контекстыг ашиглан Монголоор товч, тодорхой хариул.
-Үнэ, хүргэлт, харьцуулалт, зөвлөгөөний асуултад мэдлэгтэйгээр хариул.
-CLIENT_URL: ${CLIENT_URL}`,
+Манай дэлгүүрийн БОДИТ бараа болон үнэ (үнэтэйгээс хямдруу):
+${productList}
+
+Дэлгүүрийн сайт: ${CLIENT_URL}
+
+ЧУХАЛ:
+- Зөвхөн дээрх жагсаалтаас бодит үнийг ашигла
+- Hallucinate хийхгүй, жагсаалтад байхгүй бол "тодорхойгүй" гэ
+- Монголоор товч, тодорхой хариул
+- Өмнөх ярианы контекстыг харгалз`,
       },
       ...history,
       { role: 'user', content: text },
